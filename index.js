@@ -82,7 +82,7 @@ function sendNotification(item){
                 notification: {
                     title: item.title,
                     body: item.topic,
-                    link: 'http://test.de'
+                    icon: 'images/icon-192x192.png'
                 }
             })
         }))
