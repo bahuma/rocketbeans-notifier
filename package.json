@@ -13,6 +13,6 @@
     "node-fetch": "^1.7.1"
   },
   "scripts": {
-    "postinstall": "bower install"
+    "postinstall": "node_modules/.bin/bower install"
   }
 }
