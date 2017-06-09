@@ -1,0 +1,122 @@
+<link rel="import" href="bower_components/polymer/polymer.html">
+<link rel="import" href="bower_components/polymerfire/firebase-app.html">
+<link rel="import" href="bower_components/polymerfire/firebase-messaging.html">
+<link rel="import" href="bower_components/paper-toggle-button/paper-toggle-button.html">
+<link rel="import" href="bower_components/iron-ajax/iron-ajax.html">
+<link rel="import" href="bower_components/paper-input/paper-input.html">
+<link rel="import" href="bower_components/paper-button/paper-button.html">
+
+<dom-module id="rbtv-app">
+    <template>
+        <style>
+
+        </style>
+
+        <firebase-app
+                auth-domain="rbnotify-309b6.firebaseapp.com"
+                database-url="https://rbnotify-309b6.firebaseio.com"
+                api-key="AIzaSyAwN0lys6iJ-tcErA5s3Ht3ER5tbSrdlDA"
+                storage-bucket="rbnotify-309b6.appspot.com"
+                messaging-sender-id="791329292196">
+        </firebase-app>
+
+        <firebase-messaging
+                id="messaging"
+                token="{{token}}"
+                on-message="handleMessage"
+                on-active-changed="activeChanged">
+        </firebase-messaging>
+
+        <iron-ajax
+                auto
+                url="/api/subscribedshows"
+                handle-as="json"
+                debounce-duration="300"
+                last-response="{{shows}}">
+        </iron-ajax>
+
+        <paper-toggle-button
+                id="subscribe"
+                checked="[[token]]"
+                on-tap="toggleSubscription">
+            Subscribe to notifications
+        </paper-toggle-button>
+
+        <p>Aktuell abonnierte Shows:</p>
+        <ul>
+            <template is="dom-repeat" items="[[shows]]">
+                <li>{{item}} (<span on-tap="removeShow" data-show$="[[item]]">Deabonnieren</span>)</li>
+            </template>
+        </ul>
+
+        <paper-input label="Show Name" id="newShowName"></paper-input>
+        <paper-button on-tap="addShow">Hinzufügen</paper-button>
+
+    </template>
+</dom-module>
+
+<script>
+    Polymer({
+        is: 'rbtv-app',
+        ready: function() {
+
+        },
+        handleMessage: function() {
+            console.log('should handle message')
+        },
+        toggleSubscription: function() {
+            this.$.messaging.requestPermission().then(function() {
+                // permission was granted
+            }, function(err) {
+                // permission was denied
+            });
+        },
+        activeChanged: function(e) {
+            if (e.detail.value) {
+                fetch('/api/addsubscription',{
+                    method: 'post',
+                    body: JSON.stringify({
+                        token: this.$.messaging.token,
+                    }),
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    },
+                }).then(res => {
+                    console.log('subscription updated');
+                })
+            }
+        },
+        addShow: function() {
+            fetch('/api/subscribetoshow',{
+                method: 'post',
+                body: JSON.stringify({
+                    show: this.$.newShowName.value,
+                }),
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+            }).then(res => {
+                console.log('subscribed to show');
+                window.location.reload();
+            })
+        },
+        removeShow: function (e) {
+            let show = e.target.dataset.show;
+            fetch('/api/unsubscribetoshow',{
+                method: 'post',
+                body: JSON.stringify({
+                    show: show,
+                }),
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+            }).then(res => {
+                console.log('unsubscribed to show');
+                window.location.reload();
+            })
+        }
+    })
+</script>

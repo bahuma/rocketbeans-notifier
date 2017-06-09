@@ -1,0 +1,14 @@
+{
+  "name": "rbtvnotifier",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "dependencies": {
+    "body-parser": "^1.17.2",
+    "cron": "^1.2.1",
+    "express": "^4.15.3",
+    "moment": "^2.18.1",
+    "nconf": "^0.8.4",
+    "node-fetch": "^1.7.1"
+  }
+}

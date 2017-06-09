@@ -1,0 +1,4 @@
+public/bower_components
+.idea
+node_modules
+config.json
