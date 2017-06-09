@@ -82,7 +82,8 @@ function sendNotification(item){
                 notification: {
                     title: item.title,
                     body: item.topic,
-                    icon: 'images/icon-192x192.png'
+                    icon: 'images/icon-192x192.png',
+                    click_action: 'https://www.rocketbeans.tv'
                 }
             })
         }))
