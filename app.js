@@ -47,8 +47,10 @@ app.post('/api/unsubscribetoshow', (req, res) => {
     res.sendStatus(200);
 });
 
-app.listen(process.env.PORT || 3000, function () {
-    console.log('Example app listening on port 3000!');
+let port = process.env.PORT || process.env.app_port || 3000;
+
+app.listen(port, function () {
+    console.log('Example app listening on port ' + port);
 });
 
 const apiKey = process.env.FCM_API_KEY;
